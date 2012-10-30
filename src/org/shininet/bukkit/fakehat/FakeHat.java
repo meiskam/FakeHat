@@ -33,6 +33,7 @@ public class FakeHat extends JavaPlugin {
 	
 	public FileConfiguration config;
 	public int hat;
+	public short damage;
 	
 	public void initConfig(boolean copyDefaults) {
 		config = getConfig();
@@ -40,8 +41,25 @@ public class FakeHat extends JavaPlugin {
 			config.options().copyDefaults(true);
 			saveDefaultConfig();
 		}
-		hat = config.getInt("hat");
+		hat = config.getInt("hat", 86);
+		damage = (short)config.getInt("damage", 0);
 	}
+/*	
+	public void fakeEntityEquipment(Player player, int uid) {
+		//this.getLogger().info("making a fake 0x05");
+		PacketContainer packet = protocolManager.createPacket(0x05);
+		 
+		try {
+			packet.getSpecificModifier(int.class).write(0, uid).write(1, 4);
+			//packet.getSpecificModifier(ItemStack.class).write(0, new ItemStack(hat, 1, damage));
+			packet.getItemModifier().write(0, new ItemStack(hat, 1, damage));
+			
+			protocolManager.sendServerPacket(player, packet);
+		} catch (Exception e) {
+			getLogger().log(Level.SEVERE, "Couldn't send fake EntityEquipment packet.", e);
+		}
+	}
+*/
 	
 	@Override
 	public void onEnable(){
@@ -71,7 +89,7 @@ public class FakeHat extends JavaPlugin {
 						if (args[1].equalsIgnoreCase("get") || args[1].equalsIgnoreCase("view")) {
 							if (sender.hasPermission("fakehat.config.get")) {
 								if (args.length == 2) {
-									sender.sendMessage("["+label+":config:get] Config variables: Hat");
+									sender.sendMessage("["+label+":config:get] Config variables: Hat, Damage");
 								} else if (args.length == 3) {
 									sender.sendMessage("["+label+":config:get] "+args[2].toLowerCase()+": "+config.get(args[2].toLowerCase()));
 								} else {
@@ -83,11 +101,17 @@ public class FakeHat extends JavaPlugin {
 						} else if (args[1].equalsIgnoreCase("set")) {
 							if (sender.hasPermission("fakehat.config.set")) {
 								if (args.length == 2 || args.length == 3) {
-									sender.sendMessage("["+label+":config:set] Config variables: Hat");
+									sender.sendMessage("["+label+":config:set] Config variables: Hat, Damage");
 								} else if (args.length == 4) {
 									if (args[2].equalsIgnoreCase("hat")) {
 										try {
 											config.set("hat", Integer.parseInt(args[3]));
+										} catch (NumberFormatException e) {
+											sender.sendMessage("["+label+":config:set] ERROR: Can not convert "+args[3].toLowerCase()+" to a number");
+										}
+									} else if (args[2].equalsIgnoreCase("damage")) {
+										try {
+											config.set("damage", Integer.parseInt(args[3]));
 										} catch (NumberFormatException e) {
 											sender.sendMessage("["+label+":config:set] ERROR: Can not convert "+args[3].toLowerCase()+" to a number");
 										}
