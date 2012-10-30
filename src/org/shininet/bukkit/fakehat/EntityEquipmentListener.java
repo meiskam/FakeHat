@@ -21,6 +21,8 @@ package org.shininet.bukkit.fakehat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+//import net.minecraft.server.NBTTagCompound;
+
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,8 +56,20 @@ public class EntityEquipmentListener {
 				try {
 					
 					if (event.getPacketID() == 0x05) {
-						ItemStack[] elements = packet.getItemArrayModifier().read(0);
-						elements[0] = new ItemStack(((FakeHat)plugin).hat);
+						if (packet.getSpecificModifier(int.class).size() == 2 && packet.getItemModifier().size() == 1) {
+							int id = packet.getSpecificModifier(int.class).read(0);
+							int slot = packet.getSpecificModifier(int.class).read(1);
+							if (slot == 4) {
+								ItemStack item = packet.getItemModifier().read(0);
+
+								logger.info("id: "+id+" .. slot: "+slot+" .. item: "+item.toString());
+								
+								item.setTypeId(((FakeHat)plugin).hat);
+								item.setDurability((short)0);
+								// = new ItemStack(((FakeHat)plugin).hat);
+								
+							}
+						}
 					}
 				
 				} catch (FieldAccessException e) {
