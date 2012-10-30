@@ -61,13 +61,13 @@ public class EntityEquipmentListener {
 							int slot = packet.getSpecificModifier(int.class).read(1);
 							if (slot == 4) {
 								ItemStack item = packet.getItemModifier().read(0);
-
-								logger.info("id: "+id+" .. slot: "+slot+" .. item: "+item.toString());
-								
-								item.setTypeId(((FakeHat)plugin).hat);
-								item.setDurability((short)0);
-								// = new ItemStack(((FakeHat)plugin).hat);
-								
+								if (item != null) {
+									logger.info("id: "+id+" .. slot: "+slot+" .. item: "+item.toString());
+									
+									item.setTypeId(((FakeHat)plugin).hat);
+									item.setDurability((short)0);
+									// = new ItemStack(((FakeHat)plugin).hat);
+								}
 							}
 						}
 					}
